@@ -1,0 +1,33 @@
+(var data [{node 3 parent [2]}
+           {node 2 parent [1]}
+           {node 1 parent []}])
+
+"
+;;
+;; function converts the lis to map
+;;
+"
+(def list-to-map (data)
+ (var dict {})
+ (each (branch) data
+  (set dict branch.node branch.parent)
+  )
+ dict
+ )
+
+(def bfs (dict node)
+ (var depends (get dict node))
+ (var res [])
+ (if (empty? depends) 
+  (console.log node)
+  (do 
+   (each item depends
+     (bfs dict item)
+     (console.log node))))) 
+
+(def order-me (data item)
+ (var dict (list-to-map data))
+ (bfs dict item)
+ )
+
+(order-me data 3)
