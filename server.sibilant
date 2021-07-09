@@ -1,0 +1,85 @@
+(include "./core.sibilant")
+
+(var banner "
+╔╦╗┌─┐┌─┐┬┌─  ╔═╗┬─┐┌─┐┌─┐┌┐┌┬┌─┐┌─┐┬─┐
+ ║ ├─┤└─┐├┴┐  ║ ║├┬┘│ ┬├─┤││││┌─┘├┤ ├┬┘
+ ╩ ┴ ┴└─┘┴ ┴  ╚═╝┴└─└─┘┴ ┴┘└┘┴└─┘└─┘┴└─
+             -a crossbeam' task organizing app..")
+
+(var db "")
+
+(def init-db (data-file) 
+  (assign db (read-json data-file)))
+
+
+(def index-handler (req res)
+  (res.write-head 200
+                  {"Content-Type" "text/plain"})
+  (res.end "Welcome to `Task Organizer` a crossbeam task organizing app' " ))
+
+
+(def tasks-handler (req res)
+  (res.write-head 200
+                   {"Content-Type" "text/json"})
+  (log db)
+  (res.end (JSON.stringify db)))
+
+
+(var unsupported-method {status "405"
+                         message "method not supported"} )
+
+
+
+(def parse-body-as-json (data)
+   (try 
+     (JSON.parse (.to-string (Buffer.concat data)))
+     (do 
+       (log "error parsing body content")
+       [])))
+
+
+(def read-body (req res)
+  (var data [])
+  (req.on "data" (#(chunk) (data.push chunk)))
+  (req.on "end" 
+          (#> (var body-content (parse-body-as-json data))  
+           (log (+ "processing request [/determine-order : " (array? body-content) "]"))
+           (var result (determine-order db body-content))
+           (res.end (JSON.stringify result)))))
+
+(def order-handler (req res)
+  (var method (get req 'method))
+  (if (=  method "POST")
+    (do 
+      (res.write-head 200
+                     {"Content-Type" "text/json"})
+       (read-body req res))
+    (do
+      (res.write-head 405
+                      {"Content-Type" "text/json"})
+      (res.end (JSON.stringify unsupported-method)))
+    ))
+
+(def server-handler (req res)
+  (switch (get req 'url) 
+         ("/tasks" (tasks-handler req res))
+          ("/determine-order" (order-handler req res))
+         (default (index-handler req res))))
+
+
+(def start-server () 
+  (pipe (require 'http)
+       (.create-server
+        server-handler)
+       (.listen 8001 "127.0.0.1"))
+  (log "server started and listening on 8001"))
+
+(def start-app ()
+  (log "\n")
+  (log banner)
+  (log "initializing database..")
+  (init-db "./data.json")
+  (log "starting server..")
+  (start-server))
+
+(start-app)

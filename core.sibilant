@@ -1,0 +1,135 @@
+"---------------  ** Core Functions **   ---------------"
+
+
+"/****************************************************************
+;;  wrapper function on console.log
+;; 
+******************************************************************/ "
+(def log (args)
+ (call console.log args))
+
+
+"/****************************************************************
+;;  util function to read & parse the json file
+;; 
+******************************************************************/ "
+(def read-json (file)
+  (var fs (require 'fs))
+  (try 
+    (JSON.parse (fs.read-file-sync file "utf-8"))
+     (do 
+       (log "Error reasding data file.")
+       (""))))
+
+"/*********************************************************
+;; heler function to convert given task list to map/object
+;; so the searching will be efficient
+**********************************************************/ "
+(def list-to-map (data key1 key2)
+ (var dict {})
+ (each (branch) data
+  (set dict (get branch key1) (get branch key2))
+  )
+ dict
+ )
+
+"/****************************************************************
+;;  helper function to convert the list of items into the map 
+;; with its position/order 
+;;
+;; Example: 
+;;   ['buy' 'eat'] converted to
+;;   { 'buy' : o
+;;     'eat' : 1
+;;     'size': 2}  //here size is meta data to hold the number of items
+******************************************************************/ "
+(def collect-list-as-ordered-map (items items-map)
+ (var order (get items-map 'size))
+ (default order 0)
+  (each item (.reverse items)
+   (when (not (has-key? items-map item)) 
+    (set items-map item order)
+    (assign order (+ order 1))))
+  (set items-map 'size order)
+  items-map)
+
+
+"/****************************************************************
+;;  helper function to remove/filter the 'size attribute from the items-map
+;; 
+******************************************************************/ "
+ (def filter-size (items-map)   
+  (items-map.filter 
+   (#(item) 
+    (not (= (get item 0) 'size )))))
+
+
+"/****************************************************************
+;; helper function to sort the items-map keys based on the position/order
+;;
+******************************************************************/ " 
+(def sort-map-keys (items-map)
+ (var entries  (Object.entries items-map)) 
+ (var sorted  
+  (.sort 
+  (filter-size entries) 
+  (#(item1 item2) (> (get item1 1) (get item2 1)))))
+ (sorted.map (#(item) (get item 0)))
+ )
+
+
+
+
+
+
+"/****************************************************************
+;; DFS search algorithm helps walking through tasks/nodes & its dependencies
+;; the leaf/task without any depends will be collected in list as first item
+;; once after all its depends collected, the current node is added to the head
+;; of the list
+******************************************************************/ "
+(def dfs (dict node)
+ (var depends (get dict node))
+ (var res [])
+ (if (empty? depends) 
+  (do  
+   (assign res [node]))
+  (do 
+   (each item depends
+     (var temp (cons node (dfs dict item)))
+     (assign res temp)
+     )))
+ res)
+
+ "/****************************************************************
+;;  function to order the single item' dependencies
+;;
+******************************************************************/ "
+(def order-me (dict item)
+ (dfs dict item)
+ )
+
+ "/****************************************************************
+;;  function to order the multiple items' dependencies
+;; this is the main entry point for our core-functions
+******************************************************************/ "
+(def order-us (dict items)
+ (var res {size 0})
+ (each item items
+  (when (not (has-key? res item))
+   (assign res (collect-list-as-ordered-map (order-me dict item) res))))
+ res)
+
+
+
+
+(def valid-input? (dict items)
+ (items.every (#(item) (log item) (has-key? dict item))))
+
+ (def determine-order (db items)
+  (var dict (list-to-map db 'task 'depends))
+  (if (valid-input? dict items)
+    (sort-map-keys (order-us dict items))
+    "invalid input"))
+
+

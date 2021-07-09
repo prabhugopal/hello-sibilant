@@ -1,0 +1,88 @@
+(include "./core.sibilant")
+(include "./sample.sibilant")
+
+"---------------  ** Tests / Sample **   ---------------"
+
+ "/****************************************************************
+;;  util function to validate given 2 arrays are equal
+;; 
+******************************************************************/ "
+(def arrays-equal? (arr1 arr2)
+ (and 
+  (and 
+   (array? arr1)
+   (array? arr2))
+  (= 
+   (length arr1)
+   (length arr2))
+  (arr1.every (#(val, index) (= val (get arr2 index))))
+  ))
+
+
+"/****************************************************************
+;;  wrapper function on console.assert
+;; 
+******************************************************************/ "
+(def assert (...args)
+ (apply console.assert args))  
+
+
+"/****************************************************************
+;;  test entry point, 
+;; 
+******************************************************************/ "
+(def run-tests () 
+ (log "\n** testing valid data: `[1, 2, 3] == [1, 2, 3]`")
+ (assert 
+  (arrays-equal?
+   [1, 2, 3] 
+   (.reverse (order-me data 3)))
+  "failed valid data")
+
+ (log "\n** testing cycled data: `(.reverse (order-me cycle-data 3)) == Error: possible cycle in data`")
+ (assert
+  (=
+   "Error: possible cycle in data"
+  (try 
+   (.reverse (order-me cycle-data 3)) 
+   "Error: possible cycle in data"))
+  "failed cycled data")
+
+ (log "\n** testing test-case-1 : `(order-me example-tasks 'make a sandwich') == [ go to the store, buy groceries, make a sandwich ]`")
+ (assert
+  (arrays-equal?
+   [ "go to the store", "buy groceries", "make a sandwich" ]
+   (.reverse 
+    (order-me example-tasks "make a sandwich")))
+  "failed test-case-1")
+ 
+ (log "\n** testing test-case-2 : `(order-me example-tasks ['buy groceries' 'make a sandwich']) == [ go to the store, buy groceries, make a sandwich ]`")
+ (assert 
+  (arrays-equal?
+   [ "go to the store", "buy groceries", "make a sandwich" ]
+   (sort-map-keys 
+    (order-us example-tasks ["buy groceries" "make a sandwich"])))
+  "failed test-case-2")
+ 
+ (log "\n** testing test-case-3 : `(order-me example-tasks ['make a sandwich' 'buy groceries']) == [ go to the store, buy groceries, make a sandwich ]`")
+ (assert 
+  (arrays-equal?
+   [ "go to the store", "buy groceries", "make a sandwich" ]
+   (sort-map-keys 
+    (order-us example-tasks ["make a sandwich" "buy groceries"])))
+  "failed test-case-3")
+ 
+ (log "\n** testing test-case-4 : `(order-me example-tasks ['eat sandwich' 'make a sandwich' 'buy groceries']) == [ go to the store, buy groceries, make a sandwich eat sandwich]`")
+ (assert 
+  (arrays-equal?
+   [ "go to the store", "buy groceries", "make a sandwich", "eat sandwich" ]
+   (sort-map-keys 
+    (order-us example-tasks ["eat sandwich" "make a sandwich" "buy groceries"]))))
+ "failed test-case-4")
+
+
+"/****************************************************************
+;;  execute tests, 
+;; 
+******************************************************************/ "
+(run-tests)  

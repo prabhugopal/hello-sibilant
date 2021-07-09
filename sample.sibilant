@@ -1,0 +1,17 @@
+
+"---------------  ** Data Sample **   ---------------"
+
+(var data [{task 3 depends [2]}
+           {task 2 depends [1]}
+           {task 1 depends []}])
+
+
+(var cycle-data [{task 3 depends [2]}
+           {task 2 depends [1]}
+           {task 1 depends [3]}])
+
+(var example-tasks
+ [{task "eat sandwich", depends ["make a sandwich"]}
+ {task "make a sandwich", depends ["buy groceries"]}
+ {task "buy groceries", depends ["go to the store"]}
+ {task "go to the store", depends []}])
