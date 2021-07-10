@@ -1,4 +1,3 @@
-# Task Organizer
 
 ```scala
 ╔╦╗┌─┐┌─┐┬┌─  ╔═╗┬─┐┌─┐┌─┐┌┐┌┬┌─┐┌─┐┬─┐
@@ -7,11 +6,11 @@
              -a crossbeam' task organizing app..
 ```
 
-##### A fun RESTFul pplication which helps us to organize our tasks based on its dependencies.
+##### A fun RESTFul application which helps us to organize our tasks based on its dependencies.
 
 ##### Rationale
     We are given with a list of tasks, some of which depend on the others. So whenever we provide a subset of those tasks to the application, 
-    the application should helps us to organize the tasks by returning an ordered list of all the  dependents tasks to run in order to achieve 
+    the application should helps us to organize the tasks by returning an ordered list of all the dependents tasks to run in order to achieve 
     our tasks.        
 
 Let's say we have the following set of tasks available in the system
