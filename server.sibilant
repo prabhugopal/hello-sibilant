@@ -14,8 +14,32 @@
 
 (def index-handler (req res)
   (res.write-head 200
-                  {"Content-Type" "text/plain"})
-  (res.end "Welcome to `Task Organizer` a crossbeam task organizing app' " ))
+                  {"Content-Type" "text/html"})
+  (res.end "<body><h1>Welcome to `Task Organizer` </h1> 
+            </h7><pre>                        - a crossbeam task organizing app' </pre></h7> 
+            <h2>Api's</h2>
+            <ul>
+            <li>/tasks
+                 <ul><b><li>GET /tasks</b>            <i>gets all the define tasks.</i></li></ul>
+                  <code> </code>
+            </li>
+            <br>
+            <li>/determine-order
+                 <ul><li><b>POST /determine-order</b> <i>takes list of task as input and gives the ordered list of tasks dependecies.</i></li>
+                     <br>
+                     <li>Example
+                  <br>
+                 <code>  curl -X POST http://localhost:8001/determine-order
+                              -H \"Content-Type: application/json\" 
+                              -d \"[\\\"make a sandwich\\\"]\" 
+                  </code>
+            </li>
+                </ul>
+            
+                 
+                 
+            </li></ul>
+            </body>" ))
 
 
 (def tasks-handler (req res)
