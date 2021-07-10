@@ -18,9 +18,10 @@
   (try 
     (JSON.parse (fs.read-file-sync file "utf-8"))
      (do 
-       (log "Error reasding data file.")
+       (log "Error reading data file.")
        (""))))
 
+  
 "/*********************************************************
 ;; heler function to convert given task list to map/object
 ;; so the searching will be efficient
@@ -30,8 +31,8 @@
  (each (branch) data
   (set dict (get branch key1) (get branch key2))
   )
- dict
- )
+ dict)
+
 
 "/****************************************************************
 ;;  helper function to convert the list of items into the map 
@@ -78,10 +79,6 @@
  )
 
 
-
-
-
-
 "/****************************************************************
 ;; DFS search algorithm helps walking through tasks/nodes & its dependencies
 ;; the leaf/task without any depends will be collected in list as first item
@@ -101,15 +98,16 @@
      )))
  res)
 
- "/****************************************************************
+
+"/****************************************************************
 ;;  function to order the single item' dependencies
 ;;
 ******************************************************************/ "
 (def order-me (dict item)
- (dfs dict item)
- )
+ (dfs dict item))
 
- "/****************************************************************
+
+"/****************************************************************
 ;;  function to order the multiple items' dependencies
 ;; this is the main entry point for our core-functions
 ******************************************************************/ "
@@ -121,15 +119,23 @@
  res)
 
 
-
-
+"/****************************************************************
+;;  function to check if the provided sub-tasks are valid
+;;
+******************************************************************/ "
 (def valid-input? (dict items)
- (items.every (#(item) (log item) (has-key? dict item))))
+ (items.every (#(item) (has-key? dict item))))
 
- (def determine-order (db items)
-  (var dict (list-to-map db 'task 'depends))
-  (if (valid-input? dict items)
-    (sort-map-keys (order-us dict items))
-    "invalid input"))
+  
+"/****************************************************************
+;; this is the main entry point for our core-functions
+******************************************************************/ "
+(def determine-order (db items)
+ (var dict (list-to-map db 'task 'depends))
+ (if (valid-input? dict items)
+  (try 
+   (sort-map-keys (order-us dict items))
+   ("Error: possible cycle in the given data"))
+  "Error: invalid input"))
 
 
