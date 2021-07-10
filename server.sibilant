@@ -154,9 +154,10 @@
 (def start-app ()
  (log "\n")
  (log banner)
- (log "initializing database..")
+  (log "\n\n")
+ (log "......initializing database..")
  (init-db "./data.json")
- (log "starting server..")
+ (log "......starting server..")
  (start-server))
 
 "/****************************************************************

@@ -60,10 +60,10 @@ Apart from **DFS** the application uses **memoization** technique to avoid repet
 ##### Apis
 The application comes with following apis/endpoints to interact with it.
 
-| uri  | method | description|
-|------|--------|------------|
-|/tasks| GET    | returns all the tasks|
-|determine-order|POST| accepts: sublist of tasks <br/> returns: ordered list of all the dependent tasks.
+| uri  | method | description| payload |
+|------|--------|------------|---------|
+|/tasks| GET    | returns all the tasks||
+|determine-order|POST| accepts: sublist of tasks <br/> returns: ordered list of all the dependent tasks.| Examples: <br/> ["make a sandwich"] <br/> ["make a sandwich", "eat sandwich"]
 
 
 
@@ -73,12 +73,26 @@ The application comes with following apis/endpoints to interact with it.
 Make sure you have sibilant installed in your machine. If not check [here](https://sibilant.org/)
 
 ###### Prerequiste
-Before running the application make sure the we the all tasks updated in the **data.json**.This file serves as the database (data source) to our application.
+Before running the application make sure all tasks updated in the **data.json**. This file serves as the database (data source) to our application.
 
 1. To run 
 ```shell
 sibilant -x -f server.sibilant
 ```
+Once the application is up & running, call the apis as below.
+
+a. GET /tasks
+```curl
+curl -X GET http://localhost:8001/tasks
+```
+b. POST /tasks
+```curl
+curl -X POST http://localhost:8001/determine-order \
+     -d '["make a sandwich"]'
+```
+
+
+
 2. To run tests
 - sbt
 ```shell
