@@ -93,7 +93,7 @@ curl -X POST http://localhost:8001/determine-order \
 
 
 2. To run tests
-- sbt
+
 ```shell
 sibilant -x -f test.sibilant
 ```
