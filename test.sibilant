@@ -36,7 +36,7 @@
  (assert 
   (arrays-equal?
    [1, 2, 3] 
-   (.reverse (order-me data 3)))
+   (.reverse (order-me (list-to-map data 'task 'depends) 3)))
   "failed valid data")
 
  (log "\n** testing cycled data: `(.reverse (order-me cycle-data 3)) == Error: possible cycle in data`")
@@ -44,7 +44,7 @@
   (=
    "Error: possible cycle in data"
   (try 
-   (.reverse (order-me cycle-data 3)) 
+   (.reverse (order-me (list-to-map cycle-data 'task 'depends)  3)) 
    "Error: possible cycle in data"))
   "failed cycled data")
 
@@ -53,7 +53,7 @@
   (arrays-equal?
    [ "go to the store", "buy groceries", "make a sandwich" ]
    (.reverse 
-    (order-me example-tasks "make a sandwich")))
+    (order-me (list-to-map example-tasks 'task 'depends)  "make a sandwich")))
   "failed test-case-1")
  
  (log "\n** testing test-case-2 : `(order-me example-tasks ['buy groceries' 'make a sandwich']) == [ go to the store, buy groceries, make a sandwich ]`")
@@ -61,7 +61,7 @@
   (arrays-equal?
    [ "go to the store", "buy groceries", "make a sandwich" ]
    (sort-map-keys 
-    (order-us example-tasks ["buy groceries" "make a sandwich"])))
+    (order-us (list-to-map example-tasks 'task 'depends) ["buy groceries" "make a sandwich"])))
   "failed test-case-2")
  
  (log "\n** testing test-case-3 : `(order-me example-tasks ['make a sandwich' 'buy groceries']) == [ go to the store, buy groceries, make a sandwich ]`")
@@ -69,7 +69,7 @@
   (arrays-equal?
    [ "go to the store", "buy groceries", "make a sandwich" ]
    (sort-map-keys 
-    (order-us example-tasks ["make a sandwich" "buy groceries"])))
+    (order-us (list-to-map example-tasks 'task 'depends) ["make a sandwich" "buy groceries"])))
   "failed test-case-3")
  
  (log "\n** testing test-case-4 : `(order-me example-tasks ['eat sandwich' 'make a sandwich' 'buy groceries']) == [ go to the store, buy groceries, make a sandwich eat sandwich]`")
@@ -77,7 +77,7 @@
   (arrays-equal?
    [ "go to the store", "buy groceries", "make a sandwich", "eat sandwich" ]
    (sort-map-keys 
-    (order-us example-tasks ["eat sandwich" "make a sandwich" "buy groceries"]))))
+    (order-us (list-to-map example-tasks 'task 'depends) ["eat sandwich" "make a sandwich" "buy groceries"]))))
  "failed test-case-4")
 
 
